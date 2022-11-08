@@ -173,15 +173,19 @@ func TestPanic(t *testing.T) {
 
 func TestCoverage(t *testing.T) {
 	t.Run("without-race", func(t *testing.T) {
-		testCoverage(t, "set")
+		testCoverage(t, "set", "bazel-testlogs/a_test/coverage.dat")
 	})
 
 	t.Run("with-race", func(t *testing.T) {
-		testCoverage(t, "atomic", "--@io_bazel_rules_go//go/config:race")
+		testCoverage(t, "atomic", "bazel-testlogs/a_test/coverage.dat", "--@io_bazel_rules_go//go/config:race")
+	})
+
+	t.Run("with-combined-lcov", func(t *testing.T) {
+		testCoverage(t, "set", "bazel-out/_coverage/_coverage_report.dat", "--combined_report=lcov")
 	})
 }
 
-func testCoverage(t *testing.T, expectedCoverMode string, extraArgs ...string) {
+func testCoverage(t *testing.T, expectedCoverMode string, expectedCoveragePath string, extraArgs ...string) {
 	args := append([]string{"coverage"}, append(
 		extraArgs,
 		"--instrumentation_filter=-//:b",
@@ -193,7 +197,7 @@ func testCoverage(t *testing.T, expectedCoverMode string, extraArgs ...string) {
 		t.Fatal(err)
 	}
 
-	coveragePath := filepath.FromSlash("bazel-testlogs/a_test/coverage.dat")
+	coveragePath := filepath.FromSlash(expectedCoveragePath)
 	coverageData, err := ioutil.ReadFile(coveragePath)
 	if err != nil {
 		t.Fatal(err)

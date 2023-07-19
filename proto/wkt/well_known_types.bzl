@@ -67,7 +67,7 @@ WELL_KNOWN_TYPES_APIV2 = [
 ]
 
 # buildifier: disable=unused-variable
-def _go_proto_wrapper_compile(go, compiler, protos, imports, importpath):
+def _go_proto_wrapper_compile(go, compiler, protos, extra_outputs, imports, importpath):
     return []
 
 def _go_proto_wrapper_impl(ctx):

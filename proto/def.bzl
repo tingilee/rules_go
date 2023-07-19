@@ -124,6 +124,7 @@ def _go_proto_library_impl(ctx):
             go,
             compiler = compiler,
             protos = [d[ProtoInfo] for d in proto_deps],
+            extra_outputs = ctx.attr.extra_outputs,
             imports = get_imports(ctx.attr),
             importpath = go.importpath,
         ))
@@ -164,6 +165,9 @@ go_proto_library = rule(
         "deps": attr.label_list(
             providers = [GoLibrary],
             aspects = [_go_proto_aspect],
+        ),
+        "extra_outputs": attr.string_dict(
+            doc = "Extra output files to be included in the expected generated output",
         ),
         "importpath": attr.string(),
         "importmap": attr.string(),

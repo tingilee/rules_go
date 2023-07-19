@@ -35,7 +35,7 @@ GoProtoCompiler = provider(
     fields = {
         "compile": """A function with the signature:
 
-    def compile(go, compiler, protos, imports, importpath)
+    def compile(go, compiler, protos, extra_outputs, imports, importpath)
 
 where go is the go_context object, compiler is this GoProtoCompiler, protos
 is a list of ProtoInfo providers for protos to compile, imports is a depset
@@ -55,13 +55,14 @@ to structs produced by other compilers will set this to False.""",
     },
 )
 
-def go_proto_compile(go, compiler, protos, imports, importpath):
+def go_proto_compile(go, compiler, protos, extra_outputs, imports, importpath):
     """Invokes protoc to generate Go sources for a given set of protos
 
     Args:
         go: the go object, returned by go_context.
         compiler: a GoProtoCompiler provider.
         protos: list of ProtoInfo providers for protos to compile.
+        extra_outputs: dict of additional output files to be compiled.
         imports: depset of strings mapping proto import paths to Go import paths.
         importpath: the import path of the Go library being generated.
 
@@ -73,6 +74,10 @@ def go_proto_compile(go, compiler, protos, imports, importpath):
     outpath = None
     proto_paths = {}
     desc_sets = []
+    for _, v in extra_outputs.items():
+        if not v.endswith("pb.go"):
+            fail("extra_outputs values can only include pb.go files")
+
     for proto in protos:
         desc_sets.append(proto.transitive_descriptor_sets)
         for src in proto.check_deps_sources.to_list():
@@ -93,6 +98,17 @@ def go_proto_compile(go, compiler, protos, imports, importpath):
                 ext = compiler.internal.suffix,
             )
             go_srcs.append(out)
+
+            if extra_outputs.get(src.basename):
+                v = extra_outputs.get(src.basename)
+                file_name_without_suffix = v[:-len(".pb.go")]
+                out = go.declare_file(
+                    go,
+                    path = importpath + "/" + file_name_without_suffix,
+                    ext = compiler.internal.suffix,
+                )
+                go_srcs.append(out)
+
             if outpath == None:
                 outpath = out.dirname[:-len(importpath)]
 

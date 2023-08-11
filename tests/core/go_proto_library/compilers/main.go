@@ -4,8 +4,6 @@ import (
 	plugin "github.com/gogo/protobuf/protoc-gen-gogo/plugin"
 	"github.com/gogo/protobuf/vanity"
 	"github.com/gogo/protobuf/vanity/command"
-
-	dbenum "github.com/bazelbuild/rules_go/tests/core/go_proto_library/compilers"
 )
 
 func main() {
@@ -21,7 +19,7 @@ func main() {
 
 	baseFiles := req.FileToGenerate
 
-	dbenumGenerator := dbenum.NewGenerator()
+	dbenumGenerator := NewGenerator()
 	req = onlyEnumFiles(req, baseFiles)
 	if len(req.FileToGenerate) > 0 {
 		resp = command.GeneratePlugin(req, dbenumGenerator, "_dbenum.pb.go")
@@ -36,7 +34,7 @@ func onlyEnumFiles(
 	dbEnumFiles := make(map[string]bool)
 	for _, file := range req.GetProtoFile() {
 		for _, enum := range file.EnumType {
-			if dbenum.HasDBEnum(enum.Value) {
+			if HasDBEnum(enum.Value) {
 				dbEnumFiles[*file.Name] = true
 				break
 			}

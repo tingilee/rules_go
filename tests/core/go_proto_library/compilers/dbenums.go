@@ -1,4 +1,4 @@
-package dbenum
+package main
 
 import (
 	"bytes"

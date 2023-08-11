@@ -9,24 +9,17 @@ load(
 )
 
 go_library(
-    name = "dbenum",
-    srcs = ["dbenums.go"],
+    name = "protoc_gen_dbenum_lib",
+    srcs = [
+        "dbenums.go",
+        "main.go",
+    ],
     importpath = "github.com/bazelbuild/rules_go/tests/core/go_proto_library/compilers",
     visibility = ["//visibility:private"],
     deps = [
         "@com_github_gogo_protobuf//proto",
         "@com_github_gogo_protobuf//protoc-gen-gogo/descriptor",
         "@com_github_gogo_protobuf//protoc-gen-gogo/generator",
-    ],
-)
-
-go_library(
-    name = "protoc-gen-dbenum_lib",
-    srcs = ["main.go"],
-    importpath = "github.com/bazelbuild/rules_go/tests/core/go_proto_library/compilers",
-    visibility = ["//visibility:private"],
-    deps = [
-        "//tests/core/go_proto_library/compilers:dbenum",
         "@com_github_gogo_protobuf//protoc-gen-gogo/plugin",
         "@com_github_gogo_protobuf//vanity",
         "@com_github_gogo_protobuf//vanity/command",
@@ -35,7 +28,7 @@ go_library(
 
 go_binary(
     name = "protoc-gen-dbenum-compiler",
-    embed = [":protoc-gen-dbenum_lib"],
+    embed = [":protoc_gen_dbenum_lib"],
     visibility = ["//visibility:private"],
 )
 

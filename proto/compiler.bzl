@@ -87,22 +87,16 @@ def go_proto_compile(go, compiler, protos, imports, importpath):
                 continue
             proto_paths[path] = src
 
-            if compiler.internal.suffixes:
-                for suffix in compiler.internal.suffixes:
-                    out = go.declare_file(
-                        go,
-                        path = importpath + "/" + src.basename[:-len(".proto")],
-                        ext = suffix,
-                    )
-                    go_srcs.append(out)
-            else:
+            suffixes = compiler.internal.suffixes
+            if not suffixes:
+                suffixes = [compiler.internal.suffix]
+            for suffix in suffixes:
                 out = go.declare_file(
                     go,
                     path = importpath + "/" + src.basename[:-len(".proto")],
-                    ext = compiler.internal.suffix,
+                    ext = suffix,
                 )
                 go_srcs.append(out)
-
             if outpath == None:
                 outpath = go_srcs[0].dirname[:-len(importpath)]
 

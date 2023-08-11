@@ -24,12 +24,15 @@ import (
 func use(interface{}) {}
 
 func TestMultiSuffixCompiler(t *testing.T) {
-	// just make sure types and generated functions exist
+	// This test expects the compiler to generate two outputs:
+	// <proto>.pb.go and <proto>_dbenums.pb.go.
+	// Assert <proto>_dbenums.pb.go contains String() that returns dbenum value.
 	v := enum.Enum_BYTES
 	expected := "bytes_type"
 	if v.String() != expected {
 		panic(v.String())
 	}
+	// Assert <proto>.pb.go contains String() that returns proto Enum key.
 	v = enum.Enum_INT32
 	expected = "INT32"
 	if v.String() != expected {

@@ -87,14 +87,24 @@ def go_proto_compile(go, compiler, protos, imports, importpath):
                 continue
             proto_paths[path] = src
 
-            out = go.declare_file(
-                go,
-                path = importpath + "/" + src.basename[:-len(".proto")],
-                ext = compiler.internal.suffix,
-            )
-            go_srcs.append(out)
+            if compiler.internal.suffixes:
+                for suffix in compiler.internal.suffixes:
+                    out = go.declare_file(
+                        go,
+                        path = importpath + "/" + src.basename[:-len(".proto")],
+                        ext = suffix,
+                    )
+                    go_srcs.append(out)
+            else:
+                out = go.declare_file(
+                    go,
+                    path = importpath + "/" + src.basename[:-len(".proto")],
+                    ext = compiler.internal.suffix,
+                )
+                go_srcs.append(out)
+
             if outpath == None:
-                outpath = out.dirname[:-len(importpath)]
+                outpath = go_srcs[0].dirname[:-len(importpath)]
 
     transitive_descriptor_sets = depset(direct = [], transitive = desc_sets)
 
@@ -174,6 +184,7 @@ def _go_proto_compiler_impl(ctx):
             internal = struct(
                 options = ctx.attr.options,
                 suffix = ctx.attr.suffix,
+                suffixes = ctx.attr.suffixes,
                 protoc = ctx.executable._protoc,
                 go_protoc = ctx.executable._go_protoc,
                 plugin = ctx.executable.plugin,
@@ -190,6 +201,7 @@ _go_proto_compiler = rule(
         "deps": attr.label_list(providers = [GoLibrary]),
         "options": attr.string_list(),
         "suffix": attr.string(default = ".pb.go"),
+        "suffixes": attr.string_list(),
         "valid_archive": attr.bool(default = True),
         "import_path_option": attr.bool(default = False),
         "plugin": attr.label(

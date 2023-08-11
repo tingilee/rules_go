@@ -32,6 +32,14 @@ proto_library(
     srcs = ["grpc.proto"],
 )
 
+proto_library(
+    name = "enum_proto",
+    srcs = ["enum.proto"],
+    deps = [
+        "@com_google_protobuf//:descriptor_proto",
+    ],
+)
+
 # embed_test
 go_proto_library(
     name = "embed_go_proto",
@@ -197,6 +205,27 @@ go_proto_library(
     compilers = ["@io_bazel_rules_go//proto:gogofast_grpc"],
     importpath = "github.com/bazelbuild/rules_go/tests/core/go_proto_library/grpc",
     protos = [":grpc_proto"],
+)
+
+# compilers with multiple suffixes
+go_test(
+    name = "compilers_multi_suffix_test",
+    srcs = ["compiler_multi_suffix_test.go"],
+    deps = [
+        ":compilers_multi_suffix",
+    ],
+)
+
+go_proto_library(
+    name = "compilers_multi_suffix",
+    compilers = ["//tests/core/go_proto_library/compilers:dbenum_compiler"],
+    importpath = "github.com/bazelbuild/rules_go/tests/core/go_proto_library/enum",
+    protos = [":enum_proto"],
+    deps = [
+        "@com_github_gogo_protobuf//proto",
+        "@com_github_gogo_protobuf//protoc-gen-gogo/descriptor",
+        "@com_github_gogo_protobuf//types",
+    ],
 )
 
 # adjusted_import_test

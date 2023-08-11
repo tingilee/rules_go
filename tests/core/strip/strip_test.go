@@ -250,7 +250,7 @@ var wantStackTrace = []string{
 	`^	GOROOT/src/runtime/debug/stack\.go:\d+ \+0x[0-9a-f]+$`,
 	`^main\.panicAndRecover\.func1\(\)$`,
 	`^	strip\.go:\d+ \+0x[0-9a-f]+$`,
-	`^panic\({0x[0-9a-f]+, 0x[0-9a-f]+}\)$`,
+	`^panic\({0x[0-9a-f]+\?*, 0x[0-9a-f]+\?*}\)$`,
 	`^	GOROOT/src/runtime/panic\.go:\d+ \+0x[0-9a-f]+$`,
 	`^main\.panicAndRecover\(\)$`,
 	`^	strip\.go:\d+ \+0x[0-9a-f]+$`,

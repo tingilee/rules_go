@@ -100,6 +100,41 @@ go_proto_library(
     proto = ":proxy_proto",
 )
 
+filegroup(
+    name = "generated_resources",
+    srcs = ["//tests/core/go_proto_library:proxy_go_proto"],
+    output_group = "proxy_a.pb.go",
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "generated_resources_b",
+    srcs = ["//tests/core/go_proto_library:proxy_go_proto"],
+    output_group = "proxy_b.pb.go",
+    visibility = ["//visibility:public"],
+)
+
+go_library(
+    name = "proxy_go_library",
+    srcs = [
+        "//tests/core/go_proto_library:generated_resources",
+        "//tests/core/go_proto_library:generated_resources_b",
+    ],
+    importpath = "github.com/bazelbuild/rules_go/tests/core/go_proto_library/proxy",
+    deps = [
+        "@org_golang_google_protobuf//reflect/protoreflect",  # keep
+        "@org_golang_google_protobuf//runtime/protoimpl",  # keep
+    ],
+)
+
+go_test(
+    name = "proxy_test_using_filegroup",
+    srcs = ["proxy_test.go"],
+    deps = [
+        "//tests/core/go_proto_library:proxy_go_library",
+    ],
+)
+
 proto_library(
     name = "proxy_proto",
     deps = [

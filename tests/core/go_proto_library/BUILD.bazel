@@ -101,14 +101,14 @@ go_proto_library(
 )
 
 filegroup(
-    name = "generated_resources",
+    name = "generated_proxy_a",
     srcs = ["//tests/core/go_proto_library:proxy_go_proto"],
     output_group = "proxy_a.pb.go",
     visibility = ["//visibility:public"],
 )
 
 filegroup(
-    name = "generated_resources_b",
+    name = "generated_proxy_b",
     srcs = ["//tests/core/go_proto_library:proxy_go_proto"],
     output_group = "proxy_b.pb.go",
     visibility = ["//visibility:public"],
@@ -117,8 +117,8 @@ filegroup(
 go_library(
     name = "proxy_go_library",
     srcs = [
-        "//tests/core/go_proto_library:generated_resources",
-        "//tests/core/go_proto_library:generated_resources_b",
+        "//tests/core/go_proto_library:generated_proxy_a",
+        "//tests/core/go_proto_library:generated_proxy_b",
     ],
     importpath = "github.com/bazelbuild/rules_go/tests/core/go_proto_library/proxy",
     deps = [

@@ -134,7 +134,9 @@ def _go_proto_library_impl(ctx):
     )
     source = go.library_to_source(go, ctx.attr, library, False)
     providers = [library, source]
-    output_groups = {}
+    output_groups = {
+        "go_generated_srcs": go_srcs,
+    }
     for go_src in go_srcs:
         output_groups[go_src.basename] = depset([go_src])
     if valid_archive:
